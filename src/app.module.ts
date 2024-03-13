@@ -5,6 +5,7 @@ import { RoomsModule } from './rooms/rooms.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { WinersModule } from './winers/winers.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { WinersModule } from './winers/winers.module';
     }),
     UsersModule,
     RoomsModule,
-    WinersModule],
+    WinersModule,
+    AuthModule],
   controllers: [],
   providers: [],
 })
