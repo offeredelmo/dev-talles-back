@@ -18,15 +18,13 @@ export class Room {
     @Column("date")
     end_date:Date
 
-    @Column("text")
-    awards:string[]
+    @Column("text", { array: true })
+    awards: string[];
 
     @Column("boolean")
     visible:boolean
-
-
     
     @ManyToMany(() => User)
     @JoinTable()
-    categories: User[]
+    users: User[]
 }

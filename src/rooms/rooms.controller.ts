@@ -15,21 +15,12 @@ export class RoomsController {
   
   @Get()
   findAll() {
-    return this.roomsService.findAll();
+    return this.roomsService.findAllRooms();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roomsService.findOne(+id);
+  @Get("/visible")
+  findAllVisible() {
+    return this.roomsService.findVisibleRooms();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.update(+id, updateRoomDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roomsService.remove(+id);
-  }
 }
