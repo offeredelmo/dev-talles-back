@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,12 +32,24 @@ export class RoomsService {
     });
   }
 
-  update(id: number, updateRoomDto: UpdateRoomDto) {
-    return `This action updates a #${id} room`;
+  async update(id: string, updateRoomDto: UpdateRoomDto) {
+    const room = await this.roomRepository.findOneBy({ id_room: id });
+    if (!room) {
+      throw new BadRequestException(`Room with ID ${id} not found`);
+    }
+    const updatedRoom = this.roomRepository.merge(room, updateRoomDto);
+    await this.roomRepository.save(updatedRoom);
+    return updatedRoom;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} room`;
+  async remove(id: string) {
+    const room = await this.roomRepository.findOneBy({ id_room: id });
+    if (!room) {
+      throw new BadRequestException(`Room with ID ${id} not found`);
+    }
+    await this.roomRepository.remove(room);
+  
+    return `Room with ID ${id} delete`
   }
   
 }
