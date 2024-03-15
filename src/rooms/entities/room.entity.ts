@@ -18,13 +18,11 @@ export class Room {
     @Column("date")
     end_date:Date
 
-    @Column("text", { array: true })
-    awards: string[];
 
     @Column("boolean")
     visible:boolean
     
     @ManyToMany(() => User)
-    @JoinTable()
+    @JoinTable({name:"users_rooms"})
     users: User[]
 }
