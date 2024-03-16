@@ -1,4 +1,6 @@
-import { ArrayNotEmpty, IsArray, IsBoolean, IsDateString, IsString } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsBoolean, IsDateString, IsOptional, IsString, ValidateNested } from "class-validator";
+import { CreateAwardDto } from "./create-award.dto";
+import { Type } from "class-transformer";
 
 
 export class CreateRoomDto {
@@ -14,11 +16,13 @@ export class CreateRoomDto {
     @IsDateString()
     end_date:Date
 
-    @IsArray()
-    @ArrayNotEmpty()
-    @IsString({each:true})
-    awards: string[];
 
     @IsBoolean()
     visible:boolean 
+
+    @ValidateNested({ each: true })
+    @Type(() => CreateAwardDto)
+    @IsArray()
+    @IsOptional()
+    awards?: CreateAwardDto[];
 }

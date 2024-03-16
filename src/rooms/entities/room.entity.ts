@@ -1,5 +1,6 @@
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Award } from "./award.entity";
 
 @Entity()
 export class Room {
@@ -22,7 +23,10 @@ export class Room {
     @Column("boolean")
     visible:boolean
     
-    @ManyToMany(() => User)
+    @ManyToMany(() => User, {eager:true})
     @JoinTable({name:"users_rooms"})
     users: User[]
+
+    @OneToMany(() => Award, (award) => award.room,  { cascade: true, eager:true })
+    awards: Award[]
 }

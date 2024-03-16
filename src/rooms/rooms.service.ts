@@ -3,8 +3,9 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Room } from './entities/room.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { Award } from './entities/award.entity';
 
 @Injectable()
 export class RoomsService {
@@ -12,13 +13,28 @@ export class RoomsService {
   constructor(
     @InjectRepository(Room)
     private readonly roomRepository: Repository<Room>,
-    private readonly usersService: UsersService
+    @InjectRepository(Award)
+    private readonly awardRepository: Repository<Award>,
+
+    private readonly usersService: UsersService,
+
+    private readonly daraSource: DataSource
   ) { }
 
 
   async create(createRoomDto: CreateRoomDto) {
-    const newRoom = this.roomRepository.create(createRoomDto);
+
+    const {awards = [], ...roomDetails} = createRoomDto
+
+    const newRoom = this.roomRepository.create({
+      ...roomDetails,
+      awards: awards.map( ({name,description}) => this.awardRepository.create({name:name, description:description}))
+    });
+
+    console.log(newRoom)
+
     await this.roomRepository.save(newRoom);
+
     return newRoom;
   }
 
@@ -34,11 +50,14 @@ export class RoomsService {
     });
   }
 
-  async update(id: string, updateRoomDto: UpdateRoomDto) {
-    const room = await this.roomRepository.findOneBy({ id_room: id });
+  async update(id: string, updateRoomDto: UpdateRoomDto) { //no se encargara de actualizar los premios solo el sorteo se hara otro enpoint para eliminar el award o modificarlo 
+    const {awards, ...toUpdate} = updateRoomDto
+    const room = await this.roomRepository.preload({id_room:id,...toUpdate,})
+
     if (!room) {
       throw new BadRequestException(`Room with ID ${id} not found`);
     }
+
     const updatedRoom = this.roomRepository.merge(room, updateRoomDto);
     await this.roomRepository.save(updatedRoom);
     return updatedRoom;
