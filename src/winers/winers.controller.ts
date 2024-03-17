@@ -7,16 +7,16 @@ import { UpdateWinerDto } from './dto/update-winer.dto';
 export class WinersController {
   constructor(private readonly winersService: WinersService) {}
 
-  @Post()
+  @Post('/create')
   create(@Body() createWinerDto: CreateWinerDto) {
     return this.winersService.create(createWinerDto);
   }
 
-  @Get()
-  findAll() {
-    return this.winersService.findAll();
+  @Post('/findWinnersByRoomId/:id')
+  findWinnersByRoomId(@Param('id') id: string) {
+    return this.winersService.findWinnersByRoomId(id);
   }
-
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.winersService.findOne(+id);
