@@ -6,6 +6,7 @@ import { Room } from './entities/room.entity';
 import { DataSource, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Award } from './entities/award.entity';
+import { CreateAwardDto } from './dto/create-award.dto';
 
 @Injectable()
 export class RoomsService {
@@ -18,17 +19,16 @@ export class RoomsService {
 
     private readonly usersService: UsersService,
 
-    private readonly daraSource: DataSource
   ) { }
 
 
   async create(createRoomDto: CreateRoomDto) {
 
-    const {awards = [], ...roomDetails} = createRoomDto
+    const { awards = [], ...roomDetails } = createRoomDto
 
     const newRoom = this.roomRepository.create({
       ...roomDetails,
-      awards: awards.map( ({name,description}) => this.awardRepository.create({name:name, description:description}))
+      awards: awards.map(({ name, description }) => this.awardRepository.create({ name: name, description: description }))
     });
 
     console.log(newRoom)
@@ -38,7 +38,7 @@ export class RoomsService {
     return newRoom;
   }
 
-  
+
 
   async findAllRooms() {
     return await this.roomRepository.find();
@@ -53,16 +53,15 @@ export class RoomsService {
   }
 
   async update(id: string, updateRoomDto: UpdateRoomDto) { //no se encargara de actualizar los premios solo el sorteo se hara otro enpoint para eliminar el award o modificarlo 
-    const {awards, ...toUpdate} = updateRoomDto
-    const room = await this.roomRepository.preload({id_room:id,...toUpdate,})
+    const { awards, ...toUpdate } = updateRoomDto
+    const room = await this.roomRepository.preload({ id_room: id, ...toUpdate, })
 
     if (!room) {
       throw new BadRequestException(`Room with ID ${id} not found`);
     }
 
-    const updatedRoom = this.roomRepository.merge(room, updateRoomDto);
-    await this.roomRepository.save(updatedRoom);
-    return updatedRoom;
+    await this.roomRepository.save(room);
+    return room;
   }
 
   async remove(id: string) {
@@ -84,11 +83,11 @@ export class RoomsService {
       .where('user.id_user = :idUser', { idUser })
       .andWhere('room.id_room = :idRoom', { idRoom })
       .getCount();
-  
+
     return count > 0;
   }
-  
-  
+
+
 
   async addUserToRoom(idRoom: string, idUser: string) {
 
@@ -112,13 +111,39 @@ export class RoomsService {
     if (isUserAlreadyInRoom) {
       throw new BadRequestException(`User with ID ${idUser} is already in the room with ID ${room.name}`);
     }
-    
+
     room.users.push(user);
     await this.roomRepository.save(room);
 
     return `User ${idUser} added to room ${room.name}`;
   }
 
+
+  async deleteAwardToRoomById(idAward: string) {
+    const award = await this.awardRepository.findOneBy({ id_awards: idAward })
+    console.log(award);
+    if (!award) {
+      throw new BadRequestException(`award with ID ${idAward} not found`);
+    }
+    return await this.awardRepository.remove(award);
+    // Resto de tu lógica...
+  }
+
+
+  async addAwardToRoom(idRoom: string, createAwardDto: CreateAwardDto) {
+    const room = await this.roomRepository.findOneBy({ id_room: idRoom })
+
+    if (!room) {
+      throw new BadRequestException(`Room with ID ${idRoom} not found`);
+    }
+
+    const newAward = this.awardRepository.create(createAwardDto);
+    newAward.room = room; // Asociar el Award con la Room correspondiente
+
+    await this.awardRepository.save(newAward); // Guardar el nuevo Award en la base de datos
+
+    return newAward;
+  }
 
 
 }
