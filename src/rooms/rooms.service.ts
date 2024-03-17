@@ -38,6 +38,8 @@ export class RoomsService {
     return newRoom;
   }
 
+  
+
   async findAllRooms() {
     return await this.roomRepository.find();
   }

@@ -1,20 +1,22 @@
-import { IsArray } from "class-validator";
 import { Room } from "src/rooms/entities/room.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/users/entities/user.entity";
+import { Award } from "src/rooms/entities/award.entity";
 
 @Entity()
 export class Winer {
     @PrimaryGeneratedColumn('uuid')
     id_winer: string;
 
-    @Column('text')
-    @IsArray()
+    @Column("text")
     prize: string;
 
     @ManyToOne(() => Room, room => room.winers)
-    room: Room;
+    id_room: Room;
+
+    @ManyToOne(() => Award, award => award.winer)
+    id_award: Award;
 
     @ManyToOne(() => User, user => user.id_user)
-    user: User;
+    id_user: User;
 }

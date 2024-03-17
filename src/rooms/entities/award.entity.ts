@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Room } from "./room.entity";
-
+import { Winer } from "src/winers/entities/winer.entity";
 
 @Entity()
 export class Award {
@@ -16,4 +16,6 @@ export class Award {
     @ManyToOne(() => Room, (room) => room.awards,  {  onDelete: 'CASCADE' })
     room: Room
 
+    @ManyToOne(() => Winer, (winer) => winer.id_winer) // Add relationship with Winer
+    winer: Winer
 }

@@ -30,6 +30,6 @@ export class Room {
     @OneToMany(() => Award, (award) => award.room,  { cascade: true, eager:true })
     awards: Award[]
 
-    @OneToMany(() => Winer, (winer) => winer.room, { cascade: true, eager:true }) // Relación con Winer
-    winers: Winer[]; // Asegúrate de importar correctamente la entidad Winer
+    @OneToMany(() => Winer, (winer) => winer.id_room, { cascade: true, eager:true }) // Relación con Winer
+    winers: Winer[]; 
 }

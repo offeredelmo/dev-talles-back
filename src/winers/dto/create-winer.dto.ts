@@ -1,5 +1,3 @@
-//crear un winner
-
 import { IsNotEmpty } from "class-validator";
 
 export class CreateWinerDto {
@@ -11,4 +9,7 @@ export class CreateWinerDto {
 
     @IsNotEmpty()
     id_user: string;
+
+    @IsNotEmpty()
+    id_award: string; // Add this line
 }

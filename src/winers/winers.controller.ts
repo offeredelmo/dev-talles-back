@@ -12,9 +12,9 @@ export class WinersController {
     return this.winersService.create(createWinerDto);
   }
 
-  @Post('/findWinnersByRoomId/:id')
-  findWinnersByRoomId(@Param('id') id: string) {
-    return this.winersService.findWinnersByRoomId(id);
+  @Post('/findRoomWithDetails/:id')
+  findRoomWithDetails(@Param('id') id: string) {
+    return this.winersService.findRoomWithDetails(id);
   }
   
   @Get(':id')
