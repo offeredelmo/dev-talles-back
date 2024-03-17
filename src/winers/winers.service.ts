@@ -34,10 +34,10 @@ export class WinersService {
   
   async findWinnersByRoomId(id: string) {
     return await this.winerRepository.createQueryBuilder('winer')
-      .innerJoinAndSelect('winer.room', 'room')
       .innerJoinAndSelect('winer.user', 'user') // Join with User to get user details
+      .innerJoinAndSelect('winer.room', 'room') // Join with Room to get room details
       .select(['winer.prize', 'user', 'room']) // Select prize, user details, and room details
-      .where('room.id_room = :id', { id })
+      .where('room.id_room = :id', { id }) // Filter by room id
       .getMany();
   }
 
